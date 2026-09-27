@@ -27,7 +27,7 @@ export default function Book(){
     }, [totalPages]);
 
     return (
-    <div className="min-h-screen bg-paper flex items-center justify-center p-6">
+    <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-6 gap-4">
     <div className="relative w-full h-[90vh] bg-white shadow-md rounded-sm border border-ink/10 flex overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
         <motion.div
@@ -90,6 +90,21 @@ export default function Book(){
         </motion.div>
         </AnimatePresence>
     </div>
+        <div className="flex flex-col items-center gap-2">
+          <p className="font-hand text-lg text-ink/60">
+            {currentPage + 1} / {totalPages}
+          </p>
+          <div className="flex gap-1.5">
+            {pages.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === currentPage ? "w-4 bg-ink/70" : "w-1.5 bg-ink/25"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
     </div>
     );
 }
