@@ -25,7 +25,7 @@ export default function Book(){
     return (
     <div className="min-h-screen bg-paper flex items-center justify-center p-6">
     <div className="relative w-full h-[90vh] bg-white shadow-md rounded-sm border border-ink/10 flex">
-        {/* Left page: text */}
+        {/* Left page: text and stuff */}
         <div className="w-1/2 h-full flex items-center justify-center p-10 border-r border-ink/10">
         {spread ? (
             <p className="font-hand text-2xl text-ink text-center leading-relaxed">
@@ -36,17 +36,21 @@ export default function Book(){
         )}
         </div>
 
-        {/* Right page: image */}
-        <div className="w-1/2 h-full flex items-center justify-center p-6">
+        {/* Right page: images */}
+        <div className="w-1/2 h-full flex items-center justify-center p-6 overflow-hidden">
         {spread ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-            src={spread.image}
-            alt={spread.alt}
-            className="max-h-full max-w-full object-contain"
-            />
+            <div className="grid grid-cols-2 gap-3 w-full h-full auto-rows-fr">
+            {spread.images.map((src, i) => (
+                <img
+                key={i}
+                src={src}
+                alt={`${spread.alt} ${i + 1}`}
+                className="w-full h-full object-cover rounded-sm shadow-sm border border-ink/10"
+                />
+            ))}
+            </div>
         ) : (
-            <p className="font-hand text-xl text-ink/40">No image</p>
+            <p className="font-hand text-xl text-ink/40">No images</p>
         )}
         </div>
     </div>
