@@ -5,10 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Cover from "./Cover";
 import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
+import { escape } from "querystring";
 
 export default function Book(){
     const [currentPage, setCurrentPage] = useState(0);
     const [direction, setDirection] = useState(1);
+    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string} | null>(null);
     const totalPages = pages.length + 2;
     const isCover = currentPage === 0;
     const isBack = currentPage === totalPages - 1;
@@ -17,6 +19,10 @@ export default function Book(){
  
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
+        if (selectedImage) {
+            if (e.key === "Escape") setSelectedImage(null);
+            return;
+        }
         if (e.key === "ArrowRight") {
             setDirection(1);
             setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
@@ -29,7 +35,7 @@ export default function Book(){
         window.addEventListener("keydown", handleKeyDown);
 
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [totalPages]);
+    }, [totalPages, selectedImage]);
 
     return (
     <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-6 gap-4">
@@ -83,7 +89,8 @@ export default function Book(){
                 return (
                     <div
                     key={i}
-                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10"
+                    onClick={() => setSelectedImage({src, alt: `${spread.alt} ${i + 1}`})}
+                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10 cursor zoom-in transition-transform duration-200 hover:scale-105 hover:z-20"
                     style={{
                         top: pos.top,
                         left: pos.left,
@@ -108,6 +115,7 @@ export default function Book(){
         )}
         </motion.div>
         </AnimatePresence>
+
     </div>
         <div className="flex flex-col items-center gap-2">
           <p className="font-hand text-lg text-ink/60">
@@ -123,6 +131,33 @@ export default function Book(){
             ))}
           </div>
         </div>
+
+        <AnimatePresence>
+            {selectedImage && (
+                <motion.div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-6 cursor-zoom-out"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setSelectedImage(null)}
+                >
+                    <motion.div
+                    className="bg-white p-3 pb-8 shadow-2xl"
+                    initial={{ scale:0.85, rotate: -3}}
+                    animate={{scale:1, rotate:0}}
+                    exit={{scale:0.9}}
+                    transition={{duration:0.25, ease:"easeOut"}}
+                >
+                    <img
+                    src={selectedImage.src}
+                    alt={selectedImage.alt}
+                    className="max-h-[80vh] max-w-[85vw] object-contain"
+                    />
+                </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     </div>
     );
 }
