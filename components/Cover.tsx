@@ -10,7 +10,8 @@ export default function Cover() {
                     for ______, with love :3
                 </p>
                 <p className="font-hand text-base text-[#e8d9b5]/50 mt-10 animate-pulse">
-                    press → to open
+                    <span className="hidden md:inline">press → to open</span>
+                    <span className="md:hidden">swipe to open</span>
                 </p>
             </div>
         </div>

@@ -16,7 +16,8 @@ export default function BackCover() {
                 many more pages to fill
                 </p>
                 <p className="font-hand text-base text-[#e8d9b5]/50 mt-10">
-                ← press to go back
+                    <span className="hidden md:inline">← press to go back</span>
+                    <span className="md:hidden">swipe to go back</span>
                 </p>
 
             </div>

@@ -147,7 +147,7 @@ export default function Book(){
         <button
             onClick={goPrev}
             disabled={currentPage === 0}
-            className="font-hand text-3xl text-ink/60 px-4 py-2 disabled:opacity-20"
+            className="md:hidden font-hand text-3xl text-ink/60 px-4 py-2 disabled:opacity-20"
         >
             ←
         </button>
@@ -171,7 +171,7 @@ export default function Book(){
         <button
             onClick={goNext}
             disabled={currentPage === totalPages - 1}
-            className="font-hand text-3xl text-ink/60 px-4 py-2 disabled:opacity-20"
+            className="md:hidden font-hand text-3xl text-ink/60 px-4 py-2 disabled:opacity-20"
         >
             →
         </button>
