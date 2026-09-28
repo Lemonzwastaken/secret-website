@@ -6,11 +6,29 @@ import Cover from "./Cover";
 import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
 
+const desktopPositions = [
+    { top: "8%", left: "10%", rotate: -8 },
+    { top: "15%", left: "48%", rotate: 6 },
+    { top: "50%", left: "5%", rotate: 5 },
+    { top: "55%", left: "45%", rotate: -5 },
+    { top: "10%", left: "70%", rotate: 4 },
+    { top: "60%", left: "70%", rotate: -7 },
+]
+
+const mobilePositions = [
+    { top: "2%", left: "4%", rotate: -6 },
+    { top: "5%", left: "52%", rotate: 5 },
+    { top: "32%", left: "6%", rotate: 4 },
+    { top: "34%", left: "50%", rotate: -5 },
+    { top: "61%", left: "4%", rotate: -3 },
+    { top: "62%", left: "52%", rotate: 4 },
+]
 
 export default function Book(){
     const [currentPage, setCurrentPage] = useState(0);
     const [direction, setDirection] = useState(1);
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string} | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
     const totalPages = pages.length + 2;
     const isCover = currentPage === 0;
     const isBack = currentPage === totalPages - 1;
@@ -49,12 +67,20 @@ export default function Book(){
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [totalPages, selectedImage]);
 
+    useEffect(() => {
+        const mq = window.matchMedia("(max-width: 767px)");
+        setIsMobile(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler)
+    }, []);
+
     return (
-    <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-6 gap-4">
+    <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-3 md:p-6 gap-4">
     <div
         className={`relative w-full ${
             isClosed ? "max-w-xl" : "max-w-6xl"
-        } h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex overflow-hidden transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
+        } h-[78dvh] md:h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex overflow-hidden transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
     
         onTouchStart={(e) => {
             touchStartX.current = e.touches[0].clientX;
@@ -76,7 +102,7 @@ export default function Book(){
             animate={{ opacity: 1, x: 0 }}
             exit={(dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60 })}
             transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="absolute inset-0 flex"
+            className="absolute inset-0 flex flex-col md:flex-row"
         >
 
         {isCover ? (
@@ -85,12 +111,12 @@ export default function Book(){
             <BackCover /> ) 
         : (
           <>
-            <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
+            <div className="hidden md:block pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
 
             {/* Left page: text and stuff (piccaso) */}
-            <div className="w-1/2 h-full flex items-center justify-center p-10">
+            <div className="w-full h-[28%] md:w-1/2 md:h-full flex items-center justify-center p-4 md:p-10 overflow-y-auto">
             {spread ? (
-                <p className="font-hand text-2xl text-ink text-center leading-relaxed">
+                <p className="font-hand text-lg md:text-2xl text-ink text-center leading-relaxed">
                 {spread.text}
                 </p>
             ) : (
@@ -99,35 +125,32 @@ export default function Book(){
             </div>
 
             {/* Right page: images (No wait this is picasso) */}
-            <div className="w-1/2 h-full relative p-10 overflow-hidden">
+            <div className="w-full h-[72%] md:w-1/2 md:h-full relative p-3 md:p-10 overflow-hidden">
             {spread ? (
                 spread.images.map((src, i) => {
-                const positions = [
-                    { top: "8%", left: "10%", rotate: -8 },
-                    { top: "15%", left: "48%", rotate: 6 },
-                    { top: "50%", left: "5%", rotate: 5 },
-                    { top: "55%", left: "45%", rotate: -5 },
-                    { top: "10%", left: "70%", rotate: 4 },
-                    { top: "60%", left: "70%", rotate: -7 },
-                ];
+                const positions = isMobile ? mobilePositions : desktopPositions
                 const pos = positions[i % positions.length];
                 return (
                     <div
                     key={i}
                     onClick={() => setSelectedImage({src, alt: `${spread.alt} ${i + 1}`})}
-                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10 cursor-zoom-in transition-transform duration-200 hover:scale-105 hover:z-20"
+                    className="absolute bg-white p-1.5 pb-6 md:p-2 md:pb-5 shadow-md border border-ink/10 cursor-zoom-in transition-transform duration-200 md:hover:scale-105 md:hover:z-20"
                     style={{
                         top: pos.top,
                         left: pos.left,
-                        width: "40%",
-                        height: "40%",
+                        width: isMobile ? "44%" : "40%",
+                        height: isMobile ? "auto" : "40%",
                         transform: `rotate(${pos.rotate}deg)`,
                     }}
                     >
                     <img
                         src={src}
                         alt={`${spread.alt} ${i + 1}`}
-                        className="w-full h-full object-contain"
+                        className={
+                            isMobile
+                                ? "w-full aspect-square object-cover"
+                                : "w-full h-full object-contain"
+                        }
                     />
                     </div>
                 );
