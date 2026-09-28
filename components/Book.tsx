@@ -29,7 +29,11 @@ export default function Book(){
 
     return (
     <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-6 gap-4">
-    <div className="relative w-full h-[90vh] bg-white shadow-md rounded-sm border border-ink/10 flex overflow-hidden">
+    <div
+        className={`relative w-full ${
+            currentPage === 0 ? "max-w-xl" : "max-w-6xl"
+        } h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex overflow-hidden transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
+    >
         <AnimatePresence mode="wait" custom={direction}>
         <motion.div
             key={currentPage}
@@ -44,8 +48,10 @@ export default function Book(){
           <Cover />
         ) : (
           <>
+            <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
+
             {/* Left page: text and stuff */}
-            <div className="w-1/2 h-full flex items-center justify-center p-10 border-r border-ink/10">
+            <div className="w-1/2 h-full flex items-center justify-center p-10">
             {spread ? (
                 <p className="font-hand text-2xl text-ink text-center leading-relaxed">
                 {spread.text}
