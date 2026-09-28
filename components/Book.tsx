@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect,useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect,useRef, useState, type CSSProperties} from "react";
+import { AnimatePresence, motion, number } from "framer-motion";
 import Cover from "./Cover";
 import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
@@ -24,9 +24,20 @@ const mobilePositions = [
     { top: "62%", left: "52%", rotate: 4 },
 ]
 
+const FLIP_DURATION = 0.8;
+
+const faceStyle: CSSProperties = {
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+}
+
+type SpreadData = (typeof pages)[number];
+
+
 export default function Book(){
     const [currentPage, setCurrentPage] = useState(0);
     const [direction, setDirection] = useState(1);
+    const [flip, setFlip] = useState<{from: number; dir: 1 | -1} | null>(null);
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string} | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const totalPages = pages.length + 2;
@@ -34,18 +45,36 @@ export default function Book(){
     const isBack = currentPage === totalPages - 1;
     const isClosed = isCover || isBack;
     const spread = isClosed ? null : pages[currentPage - 1];
- 
+    const flipFrom = flip ? pages[flip.from - 1] : null;
+
     const touchStartX = useRef<number | null>(null);
 
+    function goTo(next: number){
+        if (flip) return;
+        const target = Math.max(0, Math.min(next, totalPages - 1));
+        if (target === currentPage) return;
+        const dir: 1|-1 = target > currentPage ? 1:-1;
+        const bothSpreads = 
+            currentPage > 0 && currentPage < totalPages - 1 && 
+            target > 0 && target < totalPages - 1;
+        setDirection(dir);
+        if (bothSpreads && !isMobile) setFlip({from: currentPage, dir});
+        setCurrentPage(target);
+    }
+
     function goNext() {
-        setDirection(1);
-        setCurrentPage((prev) => Math.min(prev+1, totalPages-1));
+        goTo(currentPage + 1);
     }
 
     function goPrev() {
-        setDirection(-1);
-        setCurrentPage((prev) => Math.max(prev - 1, 0));
+        goTo(currentPage - 1);
     }
+
+    useEffect(() => {
+        if (!flip) return;
+        const t = setTimeout(() => setFlip(null), FLIP_DURATION * 1000 + 100);
+        return() => clearTimeout(t);
+    }, [flip]);
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
