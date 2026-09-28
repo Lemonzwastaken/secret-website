@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect,useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Cover from "./Cover";
 import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
-import { escape } from "querystring";
+
 
 export default function Book(){
     const [currentPage, setCurrentPage] = useState(0);
@@ -17,6 +17,18 @@ export default function Book(){
     const isClosed = isCover || isBack;
     const spread = isClosed ? null : pages[currentPage - 1];
  
+    const touchStartX = useRef<number | null>(null);
+
+    function goNext() {
+        setDirection(1);
+        setCurrentPage((prev) => Math.min(prev+1, totalPages-1));
+    }
+
+    function goPrev() {
+        setDirection(-1);
+        setCurrentPage((prev) => Math.max(prev - 1, 0));
+    }
+
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
         if (selectedImage) {
@@ -43,7 +55,19 @@ export default function Book(){
         className={`relative w-full ${
             isClosed ? "max-w-xl" : "max-w-6xl"
         } h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex overflow-hidden transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
+    
+        onTouchStart={(e) => {
+            touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+            if (touchStartX.current === null || selectedImage) return;
+            const dx = e.changedTouches[0].clientX - touchStartX.current;
+            if (dx < -50) goNext();
+            else if (dx > 50) goPrev();
+            touchStartX.current = null;
+        }}
     >
+
         <AnimatePresence mode="wait" custom={direction}>
         <motion.div
             key={currentPage}
@@ -54,6 +78,7 @@ export default function Book(){
             transition={{ duration: 0.35, ease: "easeInOut" }}
             className="absolute inset-0 flex"
         >
+
         {isCover ? (
           <Cover />
         ) :isBack ? (
@@ -62,7 +87,7 @@ export default function Book(){
           <>
             <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
 
-            {/* Left page: text and stuff */}
+            {/* Left page: text and stuff (piccaso) */}
             <div className="w-1/2 h-full flex items-center justify-center p-10">
             {spread ? (
                 <p className="font-hand text-2xl text-ink text-center leading-relaxed">
@@ -73,7 +98,7 @@ export default function Book(){
             )}
             </div>
 
-            {/* Right page: images */}
+            {/* Right page: images (No wait this is picasso) */}
             <div className="w-1/2 h-full relative p-10 overflow-hidden">
             {spread ? (
                 spread.images.map((src, i) => {
@@ -90,7 +115,7 @@ export default function Book(){
                     <div
                     key={i}
                     onClick={() => setSelectedImage({src, alt: `${spread.alt} ${i + 1}`})}
-                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10 cursor zoom-in transition-transform duration-200 hover:scale-105 hover:z-20"
+                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10 cursor-zoom-in transition-transform duration-200 hover:scale-105 hover:z-20"
                     style={{
                         top: pos.top,
                         left: pos.left,
@@ -117,21 +142,42 @@ export default function Book(){
         </AnimatePresence>
 
     </div>
+        {/* buttons and page indicator :3*/}
+        <div className="flex items-center gap-6">
+        <button
+            onClick={goPrev}
+            disabled={currentPage === 0}
+            className="font-hand text-3xl text-ink/60 px-4 py-2 disabled:opacity-20"
+        >
+            ←
+        </button>
+
         <div className="flex flex-col items-center gap-2">
-          <p className="font-hand text-lg text-ink/60">
+            <p className="font-hand text-lg text-ink/60">
             {currentPage + 1} / {totalPages}
-          </p>
-          <div className="flex gap-1.5">
-            {Array.from ({length: totalPages}).map((_, i) => (
+            </p>
+            <div className="flex gap-1.5">
+            {Array.from({ length: totalPages }).map((_, i) => (
                 <div
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${
-                    i === currentPage ? "w-4 bg-ink/70" : "w-1.5 bg-ink/25"}`}
+                    i === currentPage ? "w-4 bg-ink/70" : "w-1.5 bg-ink/25"
+                }`}
                 />
             ))}
-          </div>
+            </div>
         </div>
 
+        <button
+            onClick={goNext}
+            disabled={currentPage === totalPages - 1}
+            className="font-hand text-3xl text-ink/60 px-4 py-2 disabled:opacity-20"
+        >
+            →
+        </button>
+        </div>
+        
+        {/*enlarge images :P */}
         <AnimatePresence>
             {selectedImage && (
                 <motion.div
