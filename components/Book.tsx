@@ -3,13 +3,17 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Cover from "./Cover";
+import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
 
 export default function Book(){
     const [currentPage, setCurrentPage] = useState(0);
     const [direction, setDirection] = useState(1);
-    const totalPages = pages.length + 1;
-    const spread = currentPage === 0 ? null : pages[currentPage - 1];
+    const totalPages = pages.length + 2;
+    const isCover = currentPage === 0;
+    const isBack = currentPage === totalPages - 1;
+    const isClosed = isCover || isBack;
+    const spread = isClosed ? null : pages[currentPage - 1];
  
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
@@ -31,7 +35,7 @@ export default function Book(){
     <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-6 gap-4">
     <div
         className={`relative w-full ${
-            currentPage === 0 ? "max-w-xl" : "max-w-6xl"
+            isClosed ? "max-w-xl" : "max-w-6xl"
         } h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex overflow-hidden transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
     >
         <AnimatePresence mode="wait" custom={direction}>
@@ -44,9 +48,11 @@ export default function Book(){
             transition={{ duration: 0.35, ease: "easeInOut" }}
             className="absolute inset-0 flex"
         >
-        {currentPage === 0 ? (
+        {isCover ? (
           <Cover />
-        ) : (
+        ) :isBack ? (
+            <BackCover /> ) 
+        : (
           <>
             <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
 
