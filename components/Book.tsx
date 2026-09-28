@@ -91,21 +91,6 @@ export default function Book(){
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, flip, isMobile, selectedImage, totalPages]);
 
-    useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-        if (selectedImage) {
-            if (e.key === "Escape") setSelectedImage(null);
-            return;
-        }
-        if (e.key === "ArrowRight") goNext();
-        else if (e.key === "ArrowLeft") goPrev();
-    }
-
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage, flip, isMobile, selectedImage, totalPages]);
-
 
     function textContent(s: SpreadData){
         return (
@@ -177,7 +162,7 @@ export default function Book(){
                 <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />   
 
                 <div className="w-1/2 h-full">{textPage(leftBase)}</div>
-                <div className="w-1/2 h-full">{textPage(rightBase)}</div>
+                <div className="w-1/2 h-full">{photoPage(rightBase)}</div>
 
                 <motion.div
                     className={`absolute top-0 w-1/2 h-full ${fwd ? "right-0" : "left-0"}`}
