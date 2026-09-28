@@ -78,39 +78,148 @@ export default function Book(){
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
+            if (selectedImage) {
+                if (e.key === "Escape") setSelectedImage(null);
+                return;
+            }
+            if (e.key === "ArrowRight") goNext();
+            else if (e.key === "ArrowLeft") goPrev();
+        }
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage, flip, isMobile, selectedImage, totalPages]);
+
+    useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
         if (selectedImage) {
             if (e.key === "Escape") setSelectedImage(null);
             return;
         }
-        if (e.key === "ArrowRight") {
-            setDirection(1);
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
-        } else if (e.key === "ArrowLeft") {
-            setDirection(-1);
-            setCurrentPage((prev) => Math.max(prev - 1, 0));
-        }
-        }
+        if (e.key === "ArrowRight") goNext();
+        else if (e.key === "ArrowLeft") goPrev();
+    }
 
         window.addEventListener("keydown", handleKeyDown);
-
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [totalPages, selectedImage]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage, flip, isMobile, selectedImage, totalPages]);
 
-    useEffect(() => {
-        const mq = window.matchMedia("(max-width: 767px)");
-        setIsMobile(mq.matches);
-        const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-        mq.addEventListener("change", handler);
-        return () => mq.removeEventListener("change", handler)
-    }, []);
+
+    function textContent(s: SpreadData){
+        return (
+            <p className="font-hand text-lg md:text-2xl text-ink text-center leading-relaxed">
+                {s.text}
+            </p>
+        );
+    }
+    
+    function photoContent(s: SpreadData) {
+        const positions = isMobile ? mobilePositions : desktopPositions;
+        return s.images.map((src, i) => {
+            const pos = positions[i % positions.length];
+            return (
+                <div
+                    key={i}
+                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10"
+                    style={{
+                        top: pos.top,
+                        left: pos.left,
+                        width: "40%",
+                        height: "40%",
+                        transform: `rotate(${pos.rotate}deg)`,
+                    }}
+                >
+                    <img
+                        src={src}
+                        alt={`${s.alt} ${i + 1}`}
+                        className="w-full h-full object-contain"
+                    />
+                </div>
+            );
+        });
+    }
+
+    function renderFlip(){
+        if (!flip || !flipFrom || !spread) return null;
+        const fwd = flip.dir === 1; 
+
+        const leftBase = fwd ? flipFrom : spread;
+        const rightBase = fwd ? spread : flipFrom;
+
+        const textPage = (s: SpreadData) => (
+            <div className="w-full h-full flex items-center justify-center p-10 overflow-y-auto">
+                {textContent(s)}
+            </div>
+        );
+
+        const photoPage = (s: SpreadData) => (
+            <div className="w-full h-full relative p-10 overflow-hidden">
+                {photoContent(s)}
+            </div>
+        );
+
+        const shade = (
+            <motion.div
+                className="absolute inset-0 bg-black pointer-events-none"
+                initial={{opacity: 0}}
+                animate={{opacity: [0, 0.25, 0]}}
+                transition={{duration: FLIP_DURATION}}
+            />
+        )
+
+        return (
+            <div 
+                className="absolute inset-0 flex pointer-events-none"
+                style={{perspective:"3500px"}}
+            >
+                <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />   
+
+                <div className="w-1/2 h-full">{textPage(leftBase)}</div>
+                <div className="w-1/2 h-full">{textPage(rightBase)}</div>
+
+                <motion.div
+                    className={`absolute top-0 w-1/2 h-full ${fwd ? "right-0" : "left-0"}`}
+                    style={{
+                        transformOrigin : fwd ? "left center" : "right center",
+                        transformStyle: "preserve-3d",
+                    }}
+
+                    initial={{rotateY: 0}}
+                    animate={{rotateY: fwd?-180 : 180}}
+                    transition={{duration: FLIP_DURATION, ease:"easeInOut"}}
+                >
+                <div className="absolute inset-0 bg-[#fbf6ea] overflow-hidden" style={faceStyle}>
+                    {fwd ? photoPage(flipFrom) : textPage(flipFrom)}
+                    {shade}
+                </div>
+                
+                <div
+                    className="absolute inset-0 bg-[#fbf6ea] overflow-hidden"
+                    style={{ ...faceStyle, transform: "rotateY(180deg)" }}
+                >
+                    {fwd ? textPage(spread) : photoPage(spread)}
+                    {shade}
+                </div>
+
+
+                </motion.div>
+
+            </div>
+        )
+
+    }
 
     return (
     <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-3 md:p-6 gap-4">
     <div
         className={`relative w-full ${
             isClosed ? "max-w-xl" : "max-w-6xl"
-        } h-[78dvh] md:h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex overflow-hidden transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
-    
+        } h-[78dvh] md:h-[85vh] bg-[#fbf6ea] rounded-md border border-ink/10 flex ${
+            flip && !isMobile ? "overflow-visible" : "overflow-hidden"
+        } transition-[max-width] duration-500 ease-in-out shadow-[3px_3px_0_0_#efe6d2,6px_6px_0_0_#e2d8c0,9px_9px_0_0_#d6ccb2,14px_16px_24px_rgba(0,0,0,0.25)]`}
+
         onTouchStart={(e) => {
             touchStartX.current = e.touches[0].clientX;
         }}
@@ -123,75 +232,42 @@ export default function Book(){
         }}
     >
 
-        <AnimatePresence mode="wait" custom={direction}>
-        <motion.div
-            key={currentPage}
-            custom={direction}
-            initial={(dir) => ({ opacity: 0, x: dir > 0 ? 60 : -60 })}
-            animate={{ opacity: 1, x: 0 }}
-            exit={(dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60 })}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="absolute inset-0 flex flex-col md:flex-row"
-        >
+        {flip && flipFrom && spread && !isMobile ? (
+            renderFlip()
+        ) : (
+            <AnimatePresence initial={false} mode="wait" custom={direction}>
+            <motion.div
+                key={currentPage}
+                custom={direction}
+                initial={(dir) => ({ opacity: 0, x: dir > 0 ? 60 : -60 })}
+                animate={{ opacity: 1, x: 0 }}
+                exit={(dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60 })}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="absolute inset-0 flex flex-col md:flex-row"
+            >
 
-        {isCover ? (
-          <Cover />
-        ) :isBack ? (
-            <BackCover /> ) 
-        : (
-          <>
-            <div className="hidden md:block pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
-
-            {/* Left page: text and stuff (piccaso) */}
-            <div className="w-full h-[28%] md:w-1/2 md:h-full flex items-center justify-center p-4 md:p-10 overflow-y-auto">
-            {spread ? (
-                <p className="font-hand text-lg md:text-2xl text-ink text-center leading-relaxed">
-                {spread.text}
-                </p>
+            {isCover ? (
+              <Cover />
+            ) : isBack ? (
+              <BackCover />
             ) : (
-                <p className="font-hand text-xl text-ink/40">No pages yet...</p>
-            )}
-            </div>
+              <>
+                <div className="hidden md:block pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />
 
-            {/* Right page: images (No wait this is picasso) */}
-            <div className="w-full h-[72%] md:w-1/2 md:h-full relative p-3 md:p-10 overflow-hidden">
-            {spread ? (
-                spread.images.map((src, i) => {
-                const positions = isMobile ? mobilePositions : desktopPositions
-                const pos = positions[i % positions.length];
-                return (
-                    <div
-                    key={i}
-                    onClick={() => setSelectedImage({src, alt: `${spread.alt} ${i + 1}`})}
-                    className="absolute bg-white p-1.5 pb-6 md:p-2 md:pb-5 shadow-md border border-ink/10 cursor-zoom-in transition-transform duration-200 md:hover:scale-105 md:hover:z-20"
-                    style={{
-                        top: pos.top,
-                        left: pos.left,
-                        width: isMobile ? "44%" : "40%",
-                        height: isMobile ? "auto" : "40%",
-                        transform: `rotate(${pos.rotate}deg)`,
-                    }}
-                    >
-                    <img
-                        src={src}
-                        alt={`${spread.alt} ${i + 1}`}
-                        className={
-                            isMobile
-                                ? "w-full aspect-square object-cover"
-                                : "w-full h-full object-contain"
-                        }
-                    />
-                    </div>
-                );
-                })
-            ) : (
-                <p className="font-hand text-xl text-ink/40">No images</p>
+                {/* Left page: text and stuff (piccaso) */}
+                <div className="w-full h-[28%] md:w-1/2 md:h-full flex items-center justify-center p-4 md:p-10 overflow-y-auto">
+                    {spread && textContent(spread)}
+                </div>
+
+                {/* Right page: images (No wait this is picasso) */}
+                <div className="w-full h-[72%] md:w-1/2 md:h-full relative p-3 md:p-10 overflow-hidden">
+                    {spread && photoContent(spread)}
+                </div>
+              </>
             )}
-            </div>
-          </>
+            </motion.div>
+            </AnimatePresence>
         )}
-        </motion.div>
-        </AnimatePresence>
 
     </div>
         {/* buttons and page indicator :3*/}
@@ -228,7 +304,7 @@ export default function Book(){
             →
         </button>
         </div>
-        
+
         {/*enlarge images :P */}
         <AnimatePresence>
             {selectedImage && (
