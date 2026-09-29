@@ -7,6 +7,7 @@ import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
 import { useMusic } from "./UseMusic";
 import MusicButton from "./MusicButton";
+import { initialize } from "next/dist/server/lib/render-server";
 
 const desktopPositions = [
     { top: "8%", left: "10%", rotate: -8 },
@@ -26,7 +27,14 @@ const mobilePositions = [
     { top: "62%", left: "52%", rotate: 4 },
 ]
 
+
 const FLIP_DURATION = 0.8;
+
+const slideVariants = {
+    initial: (dir: number) => ({ opacity: 0, x: dir > 0 ? 60 : -60 }),
+    center: { opacity: 1, x: 0 },
+    exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -60 : 60 }),
+}
 
 const faceStyle: CSSProperties = {
     backfaceVisibility: "hidden",
@@ -245,9 +253,10 @@ export default function Book(){
             <motion.div
                 key={currentPage}
                 custom={direction}
-                initial={(dir) => ({ opacity: 0, x: dir > 0 ? 60 : -60 })}
-                animate={{ opacity: 1, x: 0 }}
-                exit={(dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60 })}
+                variants={slideVariants}
+                initial="initial"
+                animate="center"
+                exit="exit"
                 transition={{ duration: 0.35, ease: "easeInOut" }}
                 className="absolute inset-0 flex flex-col md:flex-row"
             >
