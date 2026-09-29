@@ -123,6 +123,4 @@ No license, do whatever you want with it. If you end up building one of these fo
 
 ## AI Declaration
 
-I used AI to help me with implementation of features like the page flipping and designing the cover and other small tweaks such as color or fonts. Also took help for the mobile implementation
-
-AI was also used for debugging and fixing errors I got while working on the website
+I used AI tools (mainly Claude) as a coding assistant while building this project. I used it to help with debugging, understanding React/TypeScript concepts, and implementing some of the more hard stuff like Framer Motion animations and page-flipping logic. I also used it to help troubleshoot deployment and TypeScript errors.
