@@ -115,7 +115,7 @@ Go for it, that's kind of the point. Here's what to actually touch:
 
 It's a normal Next.js app, so it deploys cleanly to:
 
-- **[Vercel](https://vercel.com/)** — this is what I used. Push to GitHub, import the repo on Vercel, done. Every push after that auto-redeploys, so you can keep adding pages and the live link just updates itself.
+- **[Vercel](https://vercel.com/)**: this is what I used. Push to GitHub, import the repo on Vercel, done. Every push after that auto-redeploys, so you can keep adding pages and the live link just updates itself.
 
 ## License
 
