@@ -1,0 +1,24 @@
+To generate a new page here is the template for the spread
+name your spreads like: spread1.ts, spread2.ts.....spreadN.ts where N is a whole number :P
+
+then paste this below
+
+export const spread1 = {
+  id: N(page number),
+  text: "Your text for the left page goes here",
+  images: [(IMAGES GO HERE)
+    "/photos/page1/photo1.png",
+    "/photos/page1/photo2.png",
+    "/photos/page1/photo3.png",
+    "/photos/page1/photo4.png",
+  ],
+  alt: "alt text goes here",
+};
+
+then go to pagesData.ts and write the following
+
+import your spread and add the spread to the array
+i.e this export const pages = [spread1, spread2, spread3....,spreadN];
+
+Boom you got a new page
+easy as that :D
