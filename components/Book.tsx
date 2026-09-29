@@ -1,10 +1,12 @@
 "use client"
 
 import { useEffect,useRef, useState, type CSSProperties} from "react";
-import { AnimatePresence, motion, number } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Cover from "./Cover";
 import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
+import { useMusic } from "./UseMusic";
+import MusicButton from "./MusicButton";
 
 const desktopPositions = [
     { top: "8%", left: "10%", rotate: -8 },
@@ -40,6 +42,7 @@ export default function Book(){
     const [flip, setFlip] = useState<{from: number; dir: 1 | -1} | null>(null);
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string} | null>(null);
     const [isMobile, setIsMobile] = useState(false);
+    const {audioRef, muted, startMusic, toggleMute} = useMusic();
     const totalPages = pages.length + 2;
     const isCover = currentPage === 0;
     const isBack = currentPage === totalPages - 1;
@@ -50,6 +53,7 @@ export default function Book(){
     const touchStartX = useRef<number | null>(null);
 
     function goTo(next: number){
+        startMusic();
         if (flip) return;
         const target = Math.max(0, Math.min(next, totalPages - 1));
         if (target === currentPage) return;
@@ -92,20 +96,12 @@ export default function Book(){
     }, [currentPage, flip, isMobile, selectedImage, totalPages]);
 
     useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-        if (selectedImage) {
-            if (e.key === "Escape") setSelectedImage(null);
-            return;
-        }
-        if (e.key === "ArrowRight") goNext();
-        else if (e.key === "ArrowLeft") goPrev();
-    }
-
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage, flip, isMobile, selectedImage, totalPages]);
-
+        const mq = window.matchMedia("(max-width: 767px)");
+        setIsMobile(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler)
+    }, []);
 
     function textContent(s: SpreadData){
         return (
@@ -122,19 +118,27 @@ export default function Book(){
             return (
                 <div
                     key={i}
-                    className="absolute bg-white p-2 pb-5 shadow-md border border-ink/10"
+                    onClick={() => {
+                        startMusic();
+                        setSelectedImage({ src, alt: `${s.alt} ${i + 1}` });
+                    }}
+                    className="absolute bg-white p-1.5 pb-6 md:p-2 md:pb-5 shadow-md border border-ink/10 cursor-zoom-in transition-transform duration-200 md:hover:scale-105 md:hover:z-20"
                     style={{
                         top: pos.top,
                         left: pos.left,
-                        width: "40%",
-                        height: "40%",
+                        width: isMobile ? "44%" : "40%",
+                        height: isMobile ? "auto" : "40%",
                         transform: `rotate(${pos.rotate}deg)`,
                     }}
                 >
                     <img
                         src={src}
                         alt={`${s.alt} ${i + 1}`}
-                        className="w-full h-full object-contain"
+                        className={
+                            isMobile
+                                ? "w-full aspect-square object-cover"
+                                : "w-full h-full object-contain"
+                        }
                     />
                 </div>
             );
@@ -177,7 +181,7 @@ export default function Book(){
                 <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-full w-20 -translate-x-1/2 bg-gradient-to-r from-transparent via-black/15 to-transparent" />   
 
                 <div className="w-1/2 h-full">{textPage(leftBase)}</div>
-                <div className="w-1/2 h-full">{textPage(rightBase)}</div>
+                <div className="w-1/2 h-full">{photoPage(rightBase)}</div>
 
                 <motion.div
                     className={`absolute top-0 w-1/2 h-full ${fwd ? "right-0" : "left-0"}`}
@@ -211,6 +215,7 @@ export default function Book(){
 
     }
 
+
     return (
     <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-3 md:p-6 gap-4">
     <div
@@ -225,6 +230,7 @@ export default function Book(){
         }}
         onTouchEnd={(e) => {
             if (touchStartX.current === null || selectedImage) return;
+            startMusic();
             const dx = e.changedTouches[0].clientX - touchStartX.current;
             if (dx < -50) goNext();
             else if (dx > 50) goPrev();
@@ -332,6 +338,8 @@ export default function Book(){
                 </motion.div>
             )}
         </AnimatePresence>
+
+        <MusicButton audioRef={audioRef} muted={muted} onToggle={toggleMute} />
     </div>
     );
 }
