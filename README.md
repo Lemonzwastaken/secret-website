@@ -123,6 +123,6 @@ No license, do whatever you want with it. If you end up building one of these fo
 
 ## AI Declaration
 
-I used AI to help me with implementation of features like the page flipping and designing the cover and other small tweaks such as color or fonts
+I used AI to help me with implementation of features like the page flipping and designing the cover and other small tweaks such as color or fonts. Also took help for the mobile implementation
 
 AI was also used for debugging and fixing errors I got while working on the website
