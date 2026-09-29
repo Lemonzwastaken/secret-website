@@ -1,6 +1,6 @@
 export const spread1 = {
   id: 1,
-  text: "TESTING TESTING",
+  text: "Cyberpunk 2077",
   images: [
     "/photos/page1/photo1.png",
     "/photos/page1/photo2.png",
