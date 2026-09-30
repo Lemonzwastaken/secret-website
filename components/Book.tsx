@@ -113,7 +113,7 @@ export default function Book(){
 
     function textContent(s: SpreadData){
         return (
-            <p className="font-hand text-lg md:text-2xl text-ink text-center leading-relaxed">
+            <p className="font-hand text-lg md:text-2xl text-ink text-center leading-relaxed whitespace-pre-line">
                 {s.text}
             </p>
         );

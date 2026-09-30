@@ -5,7 +5,7 @@ then paste this below
 
 export const spread1 = {
   id: N(page number),
-  text: "Your text for the left page goes here",
+  text: `Your text for the left page goes here`,
   images: [(IMAGES GO HERE)
     "/photos/page1/photo1.png",
     "/photos/page1/photo2.png",
