@@ -8,10 +8,10 @@ A little digital scrapbook I built for everyone to write their own experiences w
 
 - Compatability for phones and desktop, phones can use swiping or tapping the arrows, desktops only use arrow keys
 - Every spread has a caption on one side and a scattered, slightly-tilted polaroid collage on the other
-- Pages actually flip in 3D on desktop, like a real book, and just slide on mobile since there's no spine to flip over
-- Both a front and a back cover
-- Expand any photo by clicking on it
-- Some background music that kicks in the first time you touch anything, with a mute button if too irritating (made by me ofcourse (also replaceable))
+- Pages actually flip in 3D on desktop, like a real book, and just slide on mobile since there's no space to flip over
+- Both a front and a back cover (completely editable)
+- Expand any photo by clicking on it (For phones) or using 1,2,3,4 keys
+- Some background music that kicks in the first time you touch anything, with a mute button or using the M key for desktop users if too irritating (made by me ofcourse (also replaceable))
 - Built to not look terrible on a phone, which took more tweaking than I expected
 
 ## Tech Stack
@@ -25,13 +25,13 @@ A little digital scrapbook I built for everyone to write their own experiences w
 
 ## How the pages are set up
 
-Each page of the book (a "spread") is its own tiny file, so I could write one, commit it, and move on to the next without touching anything else. If you're building your own, this is the part you'll actually spend time in.
+Each page of the book (a "spread") is its own tiny file, so I could write one, commit it, and move on to the next without touching anything else. If you're building your own, this is the part you'll actually spend time in. 
 
 ```
 components/
-  Book.tsx          → the "engine": navigation, animations, layout
+  Book.tsx          → the meat of the project: navigation, animations, layout
   Cover.tsx         → front cover
-  BackCover.tsx     → back cover / closing page
+  BackCover.tsx     → back cover/closing page
   MusicButton.tsx   → background music player + mute button
   useMusic.ts       → hook holding the music state/logic
   pages/
@@ -115,7 +115,7 @@ Go for it, that's kind of the point. Here's what to actually touch:
 
 It's a normal Next.js app, so it deploys cleanly to:
 
-- **[Vercel](https://vercel.com/)**: this is what I used. Push to GitHub, import the repo on Vercel, done. Every push after that auto-redeploys, so you can keep adding pages and the live link just updates itself.
+- **[Vercel](https://vercel.com/)**: this is what I used. Push to GitHub, import the repo on Vercel, done. Every push after that deplopys so you dont have to worry and you can keep adding, so you can keep adding pages and the live link just updates itself.
 
 ## License
 
@@ -123,4 +123,4 @@ No license, do whatever you want with it. If you end up building one of these fo
 
 ## AI Declaration
 
-I used AI tools (mainly Claude) as a coding assistant while building this project. I used it to help with debugging, understanding React/TypeScript concepts, and implementing some of the more hard stuff like Framer Motion animations and page-flipping logic. I also used it to help troubleshoot deployment and TypeScript errors.
+I used AI tools (mainly Claude) as an assistant on this project. I used it to help with debugging, understanding React/TypeScript concepts, and implementing some of the harder stuff like Framer Motion animations and page-flipping logic. I also used it to help troubleshoot deployment and TypeScript errors. I also used AI to help with making the whole thing keyboard only like understanding the focus on the textbox on so that user does not click off. I also took help on implementing the guidebook animation. 
