@@ -7,7 +7,7 @@ import BackCover from "./BackCover";
 import { pages } from "./pages/pagesData";
 import { useMusic } from "./UseMusic";
 import MusicButton from "./MusicButton";
-import { initialize } from "next/dist/server/lib/render-server";
+import NavigationGuide from "./NavigationGuide";
 
 const desktopPositions = [
     { top: "8%", left: "10%", rotate: -8 },
@@ -90,7 +90,7 @@ export default function Book(){
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
-            if (e.key === "m" || e.key === "M") {
+            if (e.key.toLowerCase() === "m") {
                 toggleMute();
                 return;
             }
@@ -368,6 +368,8 @@ export default function Book(){
         </AnimatePresence>
 
         <MusicButton audioRef={audioRef} muted={muted} onToggle={toggleMute} />
+
+        <NavigationGuide />
     </div>
     );
 }
