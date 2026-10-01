@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, type ReactNode } from "react"
-import { PASSWORD_ENABLED, PASSWORD } from "./passwordConfig"
+import { PASSWORD_ENABLED, PASSWORD, REMEMBER_UNLOCK } from "./passwordConfig"
 
 const STORAGE_KEY = "photo-book-unlocked";
 
@@ -13,15 +13,17 @@ export default function PasswordGate({children} : {children: ReactNode}) {
 
     useEffect(() => {
         if (!PASSWORD_ENABLED) return;
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved === "true") setUnlocked(true);
+        if (REMEMBER_UNLOCK) {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved === "true") setUnlocked(true);
+        }
         setChecked(true);
     }, []);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (input === PASSWORD) {
-            localStorage.setItem(STORAGE_KEY, "true");
+            if (REMEMBER_UNLOCK) localStorage.setItem(STORAGE_KEY, "true");
             setUnlocked(true);
             setError(false);
         } else {
@@ -59,7 +61,7 @@ export default function PasswordGate({children} : {children: ReactNode}) {
                     type="submit"
                     className="font-hand text-lg text-ink/70 border border-ink/20 rounded-md px-6 py-2 hover:bg-ink/5"
                 >
-                    open sesame
+                    press ENTER to open
                 </button>
             </form>
         </div>
