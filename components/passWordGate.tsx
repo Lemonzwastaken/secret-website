@@ -41,7 +41,7 @@ export default function PasswordGate({children} : {children: ReactNode}) {
                 onSubmit={handleSubmit}
                 className="flex flex-col items-center gap-4 text-center"
             >
-                <p className="font-hand text-2xl text-ink"> pssst enter your message here :3</p>
+                <p className="font-hand text-2xl text-ink"> pssst the password is "password" ;) </p>
                 <input
                 type="password"
                 value={input}
