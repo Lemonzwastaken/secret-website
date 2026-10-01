@@ -1,6 +1,6 @@
 # E-Journal
 
-A little digital scrapbook I built for everyone to write their own experiences with photos, because a folder of camera roll photos didn't feel like enough. You can flip through it like an actual book using the arrow keys on desktop, swipes on your phone and every page has a handwritten-style note next to a pile of photos scattered around like they were just tossed onto the page.
+A little digital scrapbook I built for everyone to write their own experiences with photos, maybe for yourself, your friend or a loved one. Its very easy to navigate and you can flip through it like an actual book using the arrow keys on desktop, swipes on your phone and every page has a handwritten-style note next to a pile of photos scattered around like they were just tossed onto the page, this was inspired by a scrapbook and polaroid photos :)
 
 **Live site:** [https://journal-website-five.vercel.app/]
 
