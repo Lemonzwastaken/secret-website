@@ -15,7 +15,7 @@ export default function MusicButton({
             <button
                 onClick={onToggle}
                 className="fixed bottom-4 right-4 z-40 w-10 h-10 rounded-full bg-white/80 backdrop-blur border border-ink/10 shadow-md flex items-center justify-center text-lg"
-                aria-label={muted ? "Unmuted music" : "Mute music"}
+                aria-label={muted ? "Unmute music" : "Mute music"}
             >
                 {muted ? "🔇" : "🎵"}
             </button>

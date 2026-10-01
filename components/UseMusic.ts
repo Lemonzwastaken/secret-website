@@ -3,18 +3,18 @@ import { useEffect, useRef, useState } from "react";
 const MUTE_KEY = "photo-book-muted"
 
 export function useMusic() {
-    const [muted, setMuted] = useState(false);
+    const [muted, setMuted] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return localStorage.getItem(MUTE_KEY) === "true";
+    });
     const [started, setStarted] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
-        const saved = localStorage.getItem(MUTE_KEY);
-        if (saved === "true") {
-            setMuted(true);
-            if (audioRef.current) audioRef.current.muted = true;
+        if (audioRef.current) {
+            audioRef.current.muted = muted;
         }
-
-    }, []);
+    }, [muted]);
 
     function startMusic() {
         if (started) return;
