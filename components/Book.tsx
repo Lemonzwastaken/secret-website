@@ -90,10 +90,26 @@ export default function Book(){
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
-            if (selectedImage) {
-                if (e.key === "Escape") setSelectedImage(null);
+            if (e.key === "m" || e.key === "M") {
+                toggleMute();
                 return;
             }
+            
+            if (selectedImage) {
+                if (e.key === "Escape" || e.key === " ") setSelectedImage(null);
+                return;
+            }
+
+            if (spread && /^[1-9]$/.test(e.key)) {
+                const index = Number(e.key) - 1;
+                const src = spread.images[index];
+                if (src) {
+                    e.preventDefault();
+                    setSelectedImage({src, alt: `${spread.alt} ${index + 1}`});
+                }
+                return;
+            }
+
             if (e.key === "ArrowRight") goNext();
             else if (e.key === "ArrowLeft") goPrev();
         }

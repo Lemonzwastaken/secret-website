@@ -12,3 +12,16 @@ body {
   color: var(--color-ink);
   font-family: var(--font-hand), Arial, Helvetica, sans-serif;
 }
+
+
+@media (hover:hover) and (pointer:fine) {
+  * {
+    cursor: none !important;
+    pointer-events: none !important;
+  }
+
+  html, 
+  body {
+    pointer-events: auto !important;
+  }
+}

@@ -49,6 +49,7 @@ export default function PasswordGate({children} : {children: ReactNode}) {
                     setInput(e.target.value);
                     setError(false);
                 }}
+                onBlur={(e) => e.target.focus()}
                 autoFocus
                 className="font-hand text-x1 text-center bg-white border border-ink/20 rounded-md px-4 py-2 w-64 focus:outline-none focus:border-ink/50"
                 placeholder="password"
