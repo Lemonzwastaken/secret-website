@@ -48,7 +48,7 @@ export default function Book(){
     const [currentPage, setCurrentPage] = useState(0);
     const [direction, setDirection] = useState(1);
     const [flip, setFlip] = useState<{from: number; dir: 1 | -1} | null>(null);
-    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string} | null>(null);
+    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; caption: string} | null>(null);
     const [isMobile, setIsMobile] = useState(false);
     const {audioRef, muted, startMusic, toggleMute} = useMusic();
     const totalPages = pages.length + 2;
@@ -105,7 +105,7 @@ export default function Book(){
                 const src = spread.images[index];
                 if (src) {
                     e.preventDefault();
-                    setSelectedImage({src, alt: `${spread.alt} ${index + 1}`});
+                    setSelectedImage({src, alt: `${spread.alt} ${index + 1}`, caption: spread.text});
                 }
                 return;
             }
@@ -144,7 +144,7 @@ export default function Book(){
                     key={i}
                     onClick={() => {
                         startMusic();
-                        setSelectedImage({ src, alt: `${s.alt} ${i + 1}` });
+                        setSelectedImage({ src, alt: `${s.alt} ${i + 1}`, caption: s.text });
                     }}
                     className="absolute bg-white p-1.5 pb-6 md:p-2 md:pb-5 shadow-md border border-ink/10 cursor-zoom-in transition-transform duration-200 md:hover:scale-105 md:hover:z-20"
                     style={{
@@ -359,6 +359,9 @@ export default function Book(){
                     alt={selectedImage.alt}
                     className="max-h-[80vh] max-w-[85vw] object-contain"
                     />
+                    <p className="font-hand text-lg text-ink/70 text-center mt-3 px-2 whitespace-pre-line">
+                        {selectedImage.caption}
+                    </p>
                 </motion.div>
                 </motion.div>
             )}
