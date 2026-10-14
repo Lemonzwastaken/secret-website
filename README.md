@@ -27,27 +27,6 @@ A little digital scrapbook I built for everyone to write their own experiences w
 
 Each page of the book (a "spread") is its own tiny file, so I could write one, commit it, and move on to the next without touching anything else. If you're building your own, this is the part you'll actually spend time in. 
 
-```
-components/
-  Book.tsx          → the meat of the project: navigation, animations, layout
-  Cover.tsx         → front cover
-  BackCover.tsx     → back cover/closing page
-  MusicButton.tsx   → background music player + mute button
-  useMusic.ts       → hook holding the music state/logic
-  pages/
-    pagesData.ts    → the ordered list of every spread in the book
-    spread1.ts
-    spread2.ts
-    ...
-public/
-  photos/
-    page1/
-    page2/
-    ...
-  music/
-    yourSong.mp3
-```
-
 Each spread file looks like this:
 
 ```ts
